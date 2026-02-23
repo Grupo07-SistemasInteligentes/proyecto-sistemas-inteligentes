@@ -1,0 +1,106 @@
+version: '3.8'
+
+networks:
+  n8n-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  n8n_data:
+  nocodb_data:
+
+services:
+  # ========== 1. PostgreSQL con pgvector ==========
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: n8n-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - n8n-network
+
+  # ========== 2. n8n ==========
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DB_TYPE=${DB_TYPE}
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      - DB_POSTGRESDB_SCHEMA=${DB_POSTGRESDB_SCHEMA}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=${N8N_PORT}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+    ports:
+      - "5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/flows:/home/node/.n8n/flows
+      - ./workspace:/home/node/workspace
+    networks:
+      - n8n-network
+
+  # ========== 3. Python API ==========
+  python-api:
+    image: pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+    container_name: n8n-python-api
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./python-api:/app
+    ports:
+      - "5000:5000"
+    command: >
+      bash -c "
+      pip install --no-cache-dir flask==2.3.3 flask-cors==4.0.0 sentence-transformers==2.2.2 psycopg2-binary==2.9.7 &&
+      python app.py
+      "
+    depends_on:
+      - postgres
+    networks:
+      - n8n-network
+
+  # ========== 4. NocoDB (opcional) ==========
+  nocodb:
+    image: nocodb/nocodb:latest
+    container_name: n8n-nocodb
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - nocodb_data:/usr/app/data
+    depends_on:
+      - postgres
+    environment:
+      - NC_DB=pg://postgres:5432?u=n8n_admin&p=n8n_Pass123!&d=n8n
+    networks:
+      - n8n-network

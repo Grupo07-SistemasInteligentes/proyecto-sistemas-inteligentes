@@ -1,0 +1,33 @@
+﻿# Archivos de entorno (NUNCA subir)
+.env
+*.env.local
+*.env.*.local
+
+# Carpetas de datos (son grandes y específicas de cada PC)
+n8n_data/
+postgres_data/
+nocodb_data/
+workspace/temp/
+workspace/output/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
