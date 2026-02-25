@@ -3,31 +3,34 @@ from flask_cors import CORS
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import time
+import os
 
 # Inicializar Flask
 app = Flask(__name__)
 CORS(app)  # Permitir que n8n se conecte
 
-# Cargar modelo UNA SOLA VEZ al iniciar (importante para rendimiento)
+# Configurar timeout más largo para descarga
+os.environ['HF_HUB_DOWNLOAD_TIMEOUT'] = '120'
+
+# Cargar modelo UNA SOLA VEZ al iniciar
 print("Cargando modelo de embeddings...")
+print("(Esto puede tomar 2-3 minutos la primera vez)")
 try:
-    # Forzar timeout más largo
     modelo = SentenceTransformer(
         "paraphrase-multilingual-MiniLM-L12-v2",
         device="cpu"
     )
     print("¡Modelo cargado correctamente!")
 except Exception as e:
-    print(f"Error cargando modelo: {e}")
-    print("Intentando método alternativo...")
-    # Intento alternativo con timeout explícito
-    import torch
+    print(f"Error en primera carga: {e}")
+    print("Intentando con carpeta cache local...")
+    os.makedirs("./modelo_cache", exist_ok=True)
     modelo = SentenceTransformer(
         "paraphrase-multilingual-MiniLM-L12-v2",
         device="cpu",
-        cache_folder="./modelo_cache"  # Guardar en carpeta local
+        cache_folder="./modelo_cache"
     )
-    print("¡Modelo cargado en segundo intento!")
+    print("¡Modelo cargado con cache local!")
 
 def generar_embedding(texto):
     """Convierte texto a embedding (vector numérico)"""
@@ -60,7 +63,7 @@ def embed():
         if not texto or len(texto.strip()) == 0:
             return jsonify({"error": "El texto no puede estar vacío"}), 400
         
-        # Medir tiempo (opcional, para debug)
+        # Medir tiempo
         inicio = time.time()
         embedding = generar_embedding(texto)
         fin = time.time()
@@ -69,38 +72,6 @@ def embed():
             "texto": texto[:100] + "..." if len(texto) > 100 else texto,
             "embedding": embedding,
             "dimension": len(embedding),
-            "tiempo_ms": round((fin - inicio) * 1000, 2)
-        })
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/embed-batch', methods=['POST'])
-def embed_batch():
-    """
-    Endpoint para generar embeddings de VARIOS textos
-    Uso: POST con JSON {"textos": ["texto1", "texto2", ...]}
-    """
-    try:
-        data = request.get_json()
-        
-        if not data or 'textos' not in data:
-            return jsonify({"error": "Se requiere campo 'textos' (lista)"}), 400
-        
-        textos = data['textos']
-        
-        if not isinstance(textos, list):
-            return jsonify({"error": "'textos' debe ser una lista"}), 400
-        
-        # Generar todos los embeddings
-        inicio = time.time()
-        embeddings = [generar_embedding(t) for t in textos]
-        fin = time.time()
-        
-        return jsonify({
-            "cantidad": len(textos),
-            "embeddings": embeddings,
-            "dimension": len(embeddings[0]) if embeddings else 0,
             "tiempo_ms": round((fin - inicio) * 1000, 2)
         })
         
@@ -119,15 +90,19 @@ def similitud():
         if not data or 'texto1' not in data or 'texto2' not in data:
             return jsonify({"error": "Se requieren campos 'texto1' y 'texto2'"}), 400
         
-        emb1 = np.array(generar_embedding(data['texto1']))
-        emb2 = np.array(generar_embedding(data['texto2']))
+        # Asegurar codificación UTF-8
+        texto1 = data['texto1'].encode('utf-8').decode('utf-8')
+        texto2 = data['texto2'].encode('utf-8').decode('utf-8')
+        
+        emb1 = np.array(generar_embedding(texto1))
+        emb2 = np.array(generar_embedding(texto2))
         
         # Calcular similitud de coseno
         cos_sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
         
         return jsonify({
-            "texto1": data['texto1'][:50],
-            "texto2": data['texto2'][:50],
+            "texto1": texto1[:50],
+            "texto2": texto2[:50],
             "similitud": float(cos_sim),
             "similitud_porcentaje": round(float(cos_sim) * 100, 2)
         })

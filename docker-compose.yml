@@ -69,21 +69,17 @@ services:
     networks:
       - n8n-network
 
-  # ========== 3. Python API ==========
+  # ========== 3. Python API (versión corregida) ==========
   python-api:
-    image: pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+    build: ./python-api  # Usa tu Dockerfile local
     container_name: n8n-python-api
     restart: unless-stopped
-    working_dir: /app
-    volumes:
-      - ./python-api:/app
     ports:
       - "5000:5000"
-    command: >
-      bash -c "
-      pip install --no-cache-dir flask==2.3.3 flask-cors==4.0.0 sentence-transformers==2.2.2 psycopg2-binary==2.9.7 &&
-      python app.py
-      "
+    environment:
+      - HF_HUB_DOWNLOAD_TIMEOUT=120  # Timeout más largo para descargar modelo
+    volumes:
+      - ./python-api:/app  # Montar código para desarrollo (opcional)
     depends_on:
       - postgres
     networks:
