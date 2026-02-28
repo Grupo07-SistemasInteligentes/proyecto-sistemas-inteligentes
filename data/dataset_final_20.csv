@@ -1,0 +1,21 @@
+﻿id,archivo_nombre,texto,categoria_real
+1,"archivo_1","Para calcular el promedio, sumo todos los números con sum() y divido entre len(). El código: def promedio(lista): return sum(lista)/len(lista)",normal
+2,"archivo_2","Creo una función que recibe una lista, suma sus elementos con sum() y los divide entre la cantidad con len(). Así: def calcular_promedio(numeros): total = sum(numeros); cantidad = len(numeros); return total/cantidad",normal
+3,"archivo_3","El promedio se obtiene sumando todos los valores de la lista y dividiendo por el número de elementos. Ejemplo: def promedio_lista(valores): return sum(valores)/len(valores)",normal
+4,"archivo_4","Usando sum() para la suma total y len() para contar, podemos hacer: def prom(datos): suma_total = sum(datos); num_elementos = len(datos); return suma_total/num_elementos",normal
+5,"archivo_5","Una forma simple: def promedio(n): return sum(n)/len(n) si la lista no está vacía. sum() suma todo y len() cuenta cuántos hay.",normal
+6,"archivo_6","La función debe sumar los números con sum() y dividir por len(). Código: def prom(lista): return sum(lista)/len(lista)",copia
+7,"archivo_7","Para promediar, sumamos los elementos (sum) y dividimos por la cantidad (len). def promedio(l): return sum(l)/len(l)",copia
+8,"archivo_8","El promedio se obtiene sumando todos (sum) y dividiendo por cuántos hay (len). def promedio(ls): return sum(ls)/len(ls)",copia
+9,"archivo_9","En HTML, las listas se hacen con <ul> o <ol>. Para hacer cálculos necesitas JavaScript, no Python.",off_topic
+10,"archivo_10","Las funciones en Python se declaran con def. Para ordenar listas usamos sort(). El promedio no lo uso mucho.",off_topic
+11,"archivo_11","Defino una función que recibe lista, suma con sum() y divide con len(). Ejemplo: def promedio(datos): return sum(datos)/len(datos)",normal
+12,"archivo_12","Para el promedio: sum(lista)/len(lista). Así: def sacar_promedio(numeros): return sum(numeros)/len(numeros)",normal
+13,"archivo_13","El promedio se calcula sumando todos los elementos y dividiendo por la cantidad. def calc_promedio(valores): total = sum(valores); cantidad = len(valores); return total/cantidad",normal
+14,"archivo_14","La función suma con sum() y divide con len(). def promediar(lista): return sum(lista)/len(lista)",copia
+15,"archivo_15","Sumamos los números (sum) y dividimos por cuántos son (len). def promedio_total(l): return sum(l)/len(l)",copia
+16,"archivo_16","Usamos sum() para sumar y len() para contar. def calcular_prom(ls): return sum(ls)/len(ls)",copia
+17,"archivo_17","Promedio: sum(lista) / len(lista). def prom_final(datos): return sum(datos)/len(datos)",copia
+18,"archivo_18","En Java, los arrays son diferentes. Para promedios usas bucles for.",off_topic
+19,"archivo_19","La función print() sirve para mostrar texto. El promedio no lo sé.",off_topic
+20,"archivo_20","Las listas en Python se pueden ordenar con sort(). El promedio es complicado.",off_topic
