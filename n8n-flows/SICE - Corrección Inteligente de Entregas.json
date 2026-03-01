@@ -1,0 +1,426 @@
+{
+  "name": "SICE - Corrección Inteligente de Entregas",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook",
+        "options": {}
+      },
+      "id": "0d68ea99-6253-44c0-b634-476738482ce7",
+      "name": "Webhook desde NocoDB",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -112
+      ],
+      "webhookId": "db1d4947-ddb1-46af-a5eb-df81349e6d22"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "texto_alumno",
+              "value": "={{ $json['texto'] }}"
+            },
+            {
+              "name": "alumno_nombre",
+              "value": "={{ $json['alumno_nombre'] }}"
+            },
+            {
+              "name": "alumno_email",
+              "value": "={{ $json['alumno_email'] }}"
+            },
+            {
+              "name": "archivo_nombre",
+              "value": "={{ $json['archivo_nombre'] }}"
+            },
+            {
+              "name": "id_registro",
+              "value": "={{ $json['id'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1148b4df-ee46-4209-8f8a-fc0af185ca87",
+      "name": "Preparar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api-ia:5000/analizar_texto",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "texto",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "fb115f34-5209-480f-ae6f-c27f32914bd9",
+      "name": "Llamar a API de IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        112
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {},
+      "id": "b8986df6-739a-432a-a682-cfa2a7ab7c93",
+      "name": "Combinar Resultados",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        16,
+        112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e1934de2-d874-4826-9fff-aaf7ff29c7eb",
+      "name": "Evaluar Decisión",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [
+        208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "entregas",
+        "options": {}
+      },
+      "id": "62303db3-cdfe-4e96-be42-e7ae3f6f344a",
+      "name": "Guardar en BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "entregas",
+        "options": {}
+      },
+      "id": "dfac4b63-2f18-498b-b394-739c0829d0dd",
+      "name": "Guardar Copia en BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        416,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "entregas",
+        "options": {}
+      },
+      "id": "42163874-c4ad-400c-993b-32953b775971",
+      "name": "Guardar Off-Topic en BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        416,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "schema": "public",
+        "table": "entregas",
+        "options": {}
+      },
+      "id": "785cfdea-b80d-4132-9bbf-82e30e1dd30d",
+      "name": "Guardar Válido en BD",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        416,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sice@localhost",
+        "toEmail": "={{ $json.alumno_email }}",
+        "subject": "Resultado de evaluación - SICE",
+        "text": "={{ $json.resultado_api.decision === 'Posible copia' ? '⚠️ Alerta de posible copia detectada' : ($json.resultado_api.decision === 'Fuera de tema' ? '📝 Tu entrega está fuera del tema solicitado' : '✅ Tu entrega ha sido aprobada automáticamente') }}",
+        "options": {}
+      },
+      "id": "dfd1e2b4-57c9-44e4-b8fc-2a45a14cec06",
+      "name": "Email para Copia",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sice@localhost",
+        "toEmail": "={{ $json.alumno_email }}",
+        "subject": "Resultado de evaluación - SICE",
+        "text": "={{ $json.resultado_api.decision === 'Posible copia' ? '⚠️ Alerta de posible copia detectada' : ($json.resultado_api.decision === 'Fuera de tema' ? '📝 Tu entrega está fuera del tema solicitado' : '✅ Tu entrega ha sido aprobada automáticamente') }}",
+        "options": {}
+      },
+      "id": "e9890fcb-38a0-4f46-8d63-e87576f0ca27",
+      "name": "Email para Off-Topic",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        720,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sice@localhost",
+        "toEmail": "={{ $json.alumno_email }}",
+        "subject": "Resultado de evaluación - SICE",
+        "text": "={{ $json.resultado_api.decision === 'Posible copia' ? '⚠️ Alerta de posible copia detectada' : ($json.resultado_api.decision === 'Fuera de tema' ? '📝 Tu entrega está fuera del tema solicitado' : '✅ Tu entrega ha sido aprobada automáticamente') }}",
+        "options": {}
+      },
+      "id": "b1d550be-b6b5-4b68-a1ff-324d8a43220c",
+      "name": "Email para Aprobado",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        720,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sice@localhost",
+        "toEmail": "docente@localhost",
+        "subject": "ALERTA: Posible copia detectada",
+        "text": "={{ 'Se ha detectado una posible copia en la entrega de ' + $json.alumno_nombre + '. Similitud máxima: ' + ($json.resultado_api.max_similitud_previa * 100).toFixed(2) + '%' }}",
+        "options": {}
+      },
+      "id": "b6ee9d3a-bc1d-47c0-b2c6-65864f565df4",
+      "name": "Alerta a Docente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        720,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener el item completo\nconst item = $input.first().json;\n\n// Acceder a los rows correctamente (body.data.rows)\nconst rows = item.body?.data?.rows || [];\nif (rows.length === 0) {\n  throw new Error(\"No se encontraron rows en el payload\");\n}\n\nconst primerRow = rows[0];\nconst archivos = primerRow.archivo_pdf || [];\nif (archivos.length === 0) {\n  throw new Error(\"No se encontraron archivos adjuntos\");\n}\n\nconst signedPath = archivos[0].signedPath;\n\n// Construir la URL completa (usando host.docker.internal desde contenedores)\nconst pdfUrl = `http://nocodb:8080/${signedPath}`;\n\n// Devolver los datos necesarios para los siguientes nodos\nreturn [{\n  json: {\n    alumno_nombre: primerRow.nombre_alumno,\n    archivo_nombre: archivos[0].title,\n    pdf_url: pdfUrl,\n    // Incluir también el row completo por si acaso\n    ...primerRow\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -112
+      ],
+      "id": "f4bf00fe-65eb-4a37-93a9-03a6e8d6db58",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "="
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -752,
+        112
+      ],
+      "id": "84f018e8-1fea-4d6c-bbb3-0785b90cafab",
+      "name": "HTTP Reques - descarga archivo",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -544,
+        112
+      ],
+      "id": "a29382d2-42b8-4480-8721-a1f3eedcfbfc",
+      "name": "Extract from File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook desde NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos": {
+      "main": [
+        []
+      ]
+    },
+    "Llamar a API de IA": {
+      "main": [
+        [
+          {
+            "node": "Combinar Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Resultados": {
+      "main": [
+        [
+          {
+            "node": "Evaluar Decisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en BD": {
+      "main": [
+        [
+          {
+            "node": "Alerta a Docente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Copia en BD": {
+      "main": [
+        [
+          {
+            "node": "Email para Copia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Alerta a Docente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Off-Topic en BD": {
+      "main": [
+        [
+          {
+            "node": "Email para Off-Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Válido en BD": {
+      "main": [
+        [
+          {
+            "node": "Email para Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Reques - descarga archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Reques - descarga archivo": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Llamar a API de IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f86f6a70-4f00-4de8-b418-47e67575be55",
+  "meta": {
+    "instanceId": "acee26267f5f7dd8f12efd3ac8ff0f225098f646cfa8f531d159ca45130da368"
+  },
+  "id": "rt1mxLQnaMYh0DM7",
+  "tags": []
+}

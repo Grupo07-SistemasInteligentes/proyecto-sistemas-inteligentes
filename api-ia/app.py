@@ -16,7 +16,7 @@ modelo = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 # -------------------------------
 # 2️⃣ Definir consigna (pregunta)
 # -------------------------------
-CONSIGNA = "Explicar qué es un algoritmo y dar un ejemplo."
+CONSIGNA = "Escribe una función en Python que reciba una lista de números y devuelva el promedio. Explica cómo funciona."
 
 # Generamos el embedding de la consigna una sola vez
 embedding_consigna = modelo.encode(CONSIGNA)
@@ -26,8 +26,8 @@ embedding_consigna = modelo.encode(CONSIGNA)
 # -------------------------------
 # Simulamos respuestas anteriores almacenadas
 respuestas_previas = [
-    "Un algoritmo es una secuencia ordenada de pasos para resolver un problema.",
-    "Un algoritmo es un conjunto de instrucciones definidas."
+    "Para calcular el promedio, sumo todos los números con sum() y divido entre len(). El código: def promedio(lista): return sum(lista)/len(lista)",
+    "El promedio se obtiene sumando todos los valores de la lista y dividiendo por el número de elementos. def promedio_lista(valores): return sum(valores)/len(valores)"
 ]
 
 # Convertimos esas respuestas en embeddings
@@ -117,10 +117,45 @@ def analizar():
         "decision": decision
     })
 
+@app.route("/analizar_texto", methods=["POST"])
+def analizar_texto():   
+    # Recibir JSON con el texto
+    data = request.json
+    if not data or "texto" not in data:
+        return jsonify({"error": "Debe enviar un campo 'texto' en JSON"}), 400
+
+    texto = data["texto"]
+
+    embedding_texto = modelo.encode(texto)
+
+    similitud_consigna = cosine_similarity(
+        [embedding_texto],
+        [embedding_consigna]
+    )[0][0]
+
+    similitudes_previas = [
+        cosine_similarity([embedding_texto], [emb])[0][0]
+        for emb in embeddings_previos
+    ]
+    max_similitud_previa = max(similitudes_previas)
+
+    if max_similitud_previa > UMBRAL_COPIA:
+        decision = "Posible copia"
+    elif similitud_consigna < UMBRAL_TEMA:
+        decision = "Fuera de tema"
+    else:
+        decision = "Entrega válida"
+
+    return jsonify({
+        "similitud_consigna": float(similitud_consigna),
+        "max_similitud_previa": float(max_similitud_previa),
+        "decision": decision
+    })
+
 # Endpoint de health check
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy", "model": "loaded"}), 200
 # Ejecutar la aplicación
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

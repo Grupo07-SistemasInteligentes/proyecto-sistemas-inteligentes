@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: sice_user
       POSTGRES_PASSWORD: sice_pass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -68,8 +68,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      api-ia:
-        condition: service_healthy
+      #api-ia:
+      #  condition: service_healthy
 
   # ---------- NOCODB (FRONTEND) ----------
   nocodb:
@@ -86,6 +86,7 @@ services:
         condition: service_healthy
     environment:
       - NC_DB=pg://postgres:5432?u=sice_user&p=sice_pass&d=sice_db
+      - NC_ALLOW_LOCAL_HOOKS=true
 
   # ---------- MAILHOG (EMAIL DE PRUEBA) ----------
   mailhog:
