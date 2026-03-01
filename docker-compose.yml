@@ -98,6 +98,27 @@ services:
     networks:
       - sice_network
 
+  # -- RESTORE --
+  restore:
+    image: postgres:16
+    container_name: sice_restore
+    volumes:
+      - ./scripts:/scripts
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      bash -c "
+      echo 'Esperando a PostgreSQL...' &&
+      sleep 10 &&
+      psql -h postgres -U sice_user -d sice_db -f /scripts/backup_nocodb.sql &&
+      echo '✅ Base de datos restaurada' &&
+      tail -f /dev/null
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sice_network
+
 networks:
   sice_network:
     driver: bridge
