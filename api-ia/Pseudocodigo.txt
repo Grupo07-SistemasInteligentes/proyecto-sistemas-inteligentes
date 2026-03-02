@@ -1,0 +1,39 @@
+INICIO
+
+Cargar modelo de embeddings
+
+Definir CONSIGNA
+Calcular embedding_consigna
+
+Cargar respuestas_previas
+Calcular embeddings_previos
+
+Definir UMBRAL_COPIA = 0.95
+Definir UMBRAL_TEMA = 0.50
+
+RECIBIR texto del alumno
+
+SI no hay texto:
+    devolver error
+
+Calcular embedding_texto
+
+Calcular similitud_consigna = cosine(embedding_texto, embedding_consigna)
+
+Para cada embedding en embeddings_previos:
+    calcular similitud con embedding_texto
+
+max_similitud_previa = máximo de similitudes_previas
+
+SI max_similitud_previa > UMBRAL_COPIA:
+    decision = "Posible copia"
+
+SINO SI similitud_consigna < UMBRAL_TEMA:
+    decision = "Fuera de tema"
+
+SINO:
+    decision = "Entrega válida"
+
+DEVOLVER similitud_consigna, max_similitud_previa, decision
+
+FIN
