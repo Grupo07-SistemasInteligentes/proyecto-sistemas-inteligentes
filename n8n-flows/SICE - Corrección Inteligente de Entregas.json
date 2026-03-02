@@ -11,48 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -944,
-        -112
+        -1216,
+        112
       ],
       "webhookId": "db1d4947-ddb1-46af-a5eb-df81349e6d22"
-    },
-    {
-      "parameters": {
-        "keepOnlySet": true,
-        "values": {
-          "string": [
-            {
-              "name": "texto_alumno",
-              "value": "={{ $json['texto'] }}"
-            },
-            {
-              "name": "alumno_nombre",
-              "value": "={{ $json['alumno_nombre'] }}"
-            },
-            {
-              "name": "alumno_email",
-              "value": "={{ $json['alumno_email'] }}"
-            },
-            {
-              "name": "archivo_nombre",
-              "value": "={{ $json['archivo_nombre'] }}"
-            },
-            {
-              "name": "id_registro",
-              "value": "={{ $json['id'] }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "1148b4df-ee46-4209-8f8a-fc0af185ca87",
-      "name": "Preparar Datos",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 2,
-      "position": [
-        -992,
-        144
-      ]
     },
     {
       "parameters": {
@@ -76,7 +38,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -256,
+        -288,
         112
       ],
       "alwaysOutputData": false
@@ -88,18 +50,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 2,
       "position": [
-        16,
-        112
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "e1934de2-d874-4826-9fff-aaf7ff29c7eb",
-      "name": "Evaluar Decisión",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 2,
-      "position": [
-        208,
+        -64,
         112
       ]
     },
@@ -114,9 +65,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2,
       "position": [
-        416,
-        0
-      ]
+        704,
+        -64
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DjnplCEcT7HRKLOI",
+          "name": "Postgres account"
+        }
+      }
     },
     {
       "parameters": {
@@ -129,9 +86,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2,
       "position": [
-        416,
-        112
-      ]
+        704,
+        48
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DjnplCEcT7HRKLOI",
+          "name": "Postgres account"
+        }
+      }
     },
     {
       "parameters": {
@@ -144,9 +107,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2,
       "position": [
-        416,
-        208
-      ]
+        704,
+        144
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DjnplCEcT7HRKLOI",
+          "name": "Postgres account"
+        }
+      }
     },
     {
       "parameters": {
@@ -159,9 +128,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2,
       "position": [
-        416,
-        304
-      ]
+        704,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "DjnplCEcT7HRKLOI",
+          "name": "Postgres account"
+        }
+      }
     },
     {
       "parameters": {
@@ -176,9 +151,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 1,
       "position": [
-        720,
-        0
-      ]
+        1008,
+        -64
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "ZAELdVYxY7w7n1oM",
+          "name": "SMTP account"
+        }
+      }
     },
     {
       "parameters": {
@@ -193,9 +174,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 1,
       "position": [
-        720,
-        112
-      ]
+        1008,
+        48
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "ZAELdVYxY7w7n1oM",
+          "name": "SMTP account"
+        }
+      }
     },
     {
       "parameters": {
@@ -210,9 +197,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 1,
       "position": [
-        720,
-        208
-      ]
+        1008,
+        144
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "ZAELdVYxY7w7n1oM",
+          "name": "SMTP account"
+        }
+      }
     },
     {
       "parameters": {
@@ -227,9 +220,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 1,
       "position": [
-        720,
-        304
-      ]
+        1008,
+        240
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "ZAELdVYxY7w7n1oM",
+          "name": "SMTP account"
+        }
+      }
     },
     {
       "parameters": {
@@ -238,8 +237,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -736,
-        -112
+        -976,
+        112
       ],
       "id": "f4bf00fe-65eb-4a37-93a9-03a6e8d6db58",
       "name": "Code in JavaScript"
@@ -276,11 +275,158 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        -544,
+        -512,
         112
       ],
       "id": "a29382d2-42b8-4480-8721-a1f3eedcfbfc",
       "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "fromEmail": "luismendezfernandez0501@gmail.com",
+        "toEmail": "sergio.alejo@unmsm.edu.pe",
+        "subject": "Archivo Evaluación Automatica",
+        "emailFormat": "text",
+        "text": "=El estudiante {{ $('HTTP Reques - descarga archivo').item.json.alumno_nombre }} envió el archivo {{ $('HTTP Reques - descarga archivo').item.json.archivo_nombre }}. Se detectó como \"{{ $('Combinar Resultados').item.json.decision }}\".\n\nLa respuesta enviada por el alumno fue:\n\"{{ $('Extract from File').item.json.text }}\"\n\nLos valores asignados por el modelo son:\nSimilitud: {{ $json.max_similitud_previa }}\nConsigna: {{ $json.similitud_consigna }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        112
+      ],
+      "id": "d50c20ea-7691-4cfe-8999-ef760e111796",
+      "name": "Send an Email",
+      "webhookId": "e30d3516-e537-4d23-8c73-7e6692fdd7f9",
+      "credentials": {
+        "smtp": {
+          "id": "ZAELdVYxY7w7n1oM",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "entregas",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('HTTP Reques - descarga archivo').item.json.Id }}",
+            "archivo_nombre": "={{ $('HTTP Reques - descarga archivo').item.json.archivo_nombre }}",
+            "alumno_nombre": "={{ $('HTTP Reques - descarga archivo').item.json.alumno_nombre }}",
+            "texto_extraido": "={{ $('Extract from File').item.json.text }}",
+            "similitud_consigna": "={{ $('Combinar Resultados').item.json.similitud_consigna }}",
+            "max_similitud_previa": "={{ $('Combinar Resultados').item.json.max_similitud_previa }}",
+            "decision": "={{ $('Combinar Resultados').item.json.decision }}",
+            "fecha": "={{ $('Extract from File').item.json.metadata['xmp:createdate'] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "alumno_nombre",
+              "displayName": "alumno_nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "archivo_nombre",
+              "displayName": "archivo_nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "texto_extraido",
+              "displayName": "texto_extraido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "similitud_consigna",
+              "displayName": "similitud_consigna",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "max_similitud_previa",
+              "displayName": "max_similitud_previa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha",
+              "displayName": "fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        320,
+        112
+      ],
+      "id": "ba997430-e297-42c9-8650-a002cb8f66e1",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "DjnplCEcT7HRKLOI",
+          "name": "Postgres account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -292,18 +438,8 @@
             "node": "Code in JavaScript",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Preparar Datos",
-            "type": "main",
-            "index": 0
           }
         ]
-      ]
-    },
-    "Preparar Datos": {
-      "main": [
-        []
       ]
     },
     "Llamar a API de IA": {
@@ -321,7 +457,7 @@
       "main": [
         [
           {
-            "node": "Evaluar Decisión",
+            "node": "Send an Email",
             "type": "main",
             "index": 0
           }
@@ -409,6 +545,22 @@
           }
         ]
       ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        []
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -417,8 +569,9 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "f86f6a70-4f00-4de8-b418-47e67575be55",
+  "versionId": "3dd31b3e-3802-45e6-bff1-e3a7f5ecf400",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "acee26267f5f7dd8f12efd3ac8ff0f225098f646cfa8f531d159ca45130da368"
   },
   "id": "rt1mxLQnaMYh0DM7",

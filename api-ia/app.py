@@ -36,8 +36,8 @@ embeddings_previos = [modelo.encode(r) for r in respuestas_previas]
 # -------------------------------
 # 4️⃣ Umbrales de decisión
 # -------------------------------
-UMBRAL_COPIA = 0.85   # Si supera este valor → posible copia
-UMBRAL_TEMA = 0.40    # Si es menor que esto → fuera de tema
+UMBRAL_COPIA = 0.95   # Si supera este valor → posible copia
+UMBRAL_TEMA = 0.50    # Si es menor que esto → fuera de tema
 
 # -------------------------------
 # 5️⃣ Función para extraer texto del PDF
